@@ -1,6 +1,7 @@
 ﻿using Moq;
 using RoomBookingApp.Core.DataServices;
 using RoomBookingApp.Core.Domain;
+using RoomBookingApp.Core.Enums;
 using RoomBookingApp.Core.Models;
 using RoomBookingApp.Core.Processors;
 using Shouldly;
@@ -23,7 +24,7 @@ namespace RoomBookingApp.Core
                 Email = "jhondoe@request.com",
                 Date = new DateTime(2024, 7, 1)
             };
-            _avaliableRooms = new List<Room>() { new Room()};
+            _avaliableRooms = new List<Room> { new Room { Id = 1 } };
 
             _roomBookingServiceMock = new Mock<IRoomBookingService>();
             _roomBookingServiceMock.Setup(x => x.GetAvaliableRooms(roomBookingRequest.Date))
@@ -83,6 +84,7 @@ namespace RoomBookingApp.Core
             savedRoomBooking.FullName.ShouldBe(roomBookingRequest.FullName);
             savedRoomBooking.Email.ShouldBe(roomBookingRequest.Email);
             savedRoomBooking.Date.ShouldBe(roomBookingRequest.Date);
+            savedRoomBooking.RoomId.ShouldBe(_avaliableRooms.First().Id);
         }
 
         [Fact]
@@ -92,6 +94,33 @@ namespace RoomBookingApp.Core
 
             roomBookingRequestProcessor.BookRoom(roomBookingRequest);
             _roomBookingServiceMock.Verify(x => x.Save(It.IsAny<RoomBooking>()), Times.Never);
+        }
+
+        [Theory]
+        [InlineData(BookingSuccessFlag.Failure, false)]
+        [InlineData(BookingSuccessFlag.Success, true)]
+        public void ShouldReturnSuccessOrFailureFlagInResult_Theory(BookingSuccessFlag bookingSuccessFlag, bool isAvailable)
+        {
+            if (!isAvailable)
+                _avaliableRooms.Clear();
+
+            RoomBookResult result = roomBookingRequestProcessor.BookRoom(roomBookingRequest);
+            bookingSuccessFlag.ShouldBe(result.BookingSuccessFlag);
+        }
+
+        [Theory]
+        [InlineData(null, false)]
+        [InlineData(1, true)]
+        public void ShouldReturnSuccessOrFailureFlagInRoomBookingIdResult_Theory(int? roomBookingId, bool isAvailable)
+        {
+            if (!isAvailable)
+                _avaliableRooms.Clear();
+            else
+            _roomBookingServiceMock.Setup(x => x.Save(It.IsAny<RoomBooking>()))
+                .Callback<RoomBooking>(rb => rb.Id = roomBookingId.Value);
+
+            RoomBookResult result = roomBookingRequestProcessor.BookRoom(roomBookingRequest);
+            result.RoomBookingId.ShouldBe(roomBookingId);
         }
     }
 }
