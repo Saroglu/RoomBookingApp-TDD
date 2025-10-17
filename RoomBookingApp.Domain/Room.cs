@@ -1,4 +1,5 @@
-﻿namespace RoomBookingApp.Core.DataServices
+﻿
+namespace RoomBookingApp.Domain
 {
     public class Room
     {
