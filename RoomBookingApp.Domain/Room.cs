@@ -1,8 +1,14 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
+
 namespace RoomBookingApp.Domain
 {
     public class Room
     {
-        public int Id;
+        public int Id { get; set; }
+
+        public string Name { get; set; }
+
+        public List<RoomBooking> RoomBookings { get; set; }
     }
 }
