@@ -5,7 +5,7 @@ using RoomBookingApp.Domain.BaseModels;
 
 namespace RoomBookingApp.Core.Processors
 {
-    public class RoomBookingRequestProcessor
+    public class RoomBookingRequestProcessor : IRoomBookingRequestProcessor
     {
         private readonly IRoomBookingService _roomBookingService;
         public RoomBookingRequestProcessor(IRoomBookingService roomBookingService)
@@ -32,7 +32,8 @@ namespace RoomBookingApp.Core.Processors
 
                 result.RoomBookingId = roomBooking.Id;
                 result.BookingSuccessFlag = Enums.BookingSuccessFlag.Success;
-            }else
+            }
+            else
             {
                 result.BookingSuccessFlag = Enums.BookingSuccessFlag.Failure;
             }
