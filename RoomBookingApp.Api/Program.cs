@@ -21,7 +21,7 @@ builder.Services.AddDbContext<RoomBookingAppDbContext>(options =>
     options.UseSqlite(con)
 );
 
-
+EnsureDatabaseInitialized(con);
 
 builder.Services.AddScoped<IRoomBookingService, RoomBookingService>();
 builder.Services.AddScoped<IRoomBookingRequestProcessor, RoomBookingRequestProcessor>();
@@ -42,3 +42,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+static void EnsureDatabaseInitialized(SqliteConnection con)
+{
+    var options = new DbContextOptionsBuilder<RoomBookingAppDbContext>()
+        .UseSqlite(con)
+        .Options;
+    using var dbContext = new RoomBookingAppDbContext(options);
+    dbContext.Database.EnsureCreated();
+}

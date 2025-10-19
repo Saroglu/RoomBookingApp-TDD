@@ -42,7 +42,7 @@ namespace RoomBookingApp.Api.Tests
             }
 
             // Act
-            var result = await _controller.BookRoom(_roomBookingRequest);
+            var result = _controller.BookRoom(_roomBookingRequest);
 
             // Assert
             result.ShouldBeOfType(expectedResultType);

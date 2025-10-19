@@ -17,12 +17,12 @@ namespace RoomBookingApp.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> BookRoom(RoomBookingRequest roomBookingRequest)
+        public IActionResult BookRoom(RoomBookingRequest roomBookingRequest)
         {
             if (ModelState.IsValid)
             {
                 var result = _processor.BookRoom(roomBookingRequest);
-                if (result.BookingSuccessFlag == Core.Enums.BookingSuccessFlag.Success) 
+                if (result.BookingSuccessFlag == Core.Enums.BookingSuccessFlag.Success)
                 {
                     return Ok(result);
                 }
